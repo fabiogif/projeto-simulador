@@ -3,32 +3,15 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Simulador Avançado de Renda Fixa</title>
+    <title>Simulador de Renda Fixa com Compartilhamento</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0V4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style type="text/tailwindcss">
-        .sticky-header th {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .table-row-even {
-            background-color: #f9fafb; /* gray-50 */
-        }
-        #investimentos:not(.loaded) {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            min-height: 100px;
-            padding: 1.5rem;
-            color: #64748b; /* slate-500 */
-        }
-        #chartContainer {
-            display: none;
-            height: 450px; /* Definindo uma altura fixa para o container do gráfico */
-        }
+        .sticky-header th { position: sticky; top: 0; z-index: 10; }
+        .table-row-even { background-color: #f9fafb; }
+        #investimentos:not(.loaded) { display: flex; align-items: center; justify-content: center; text-align: center; min-height: 100px; padding: 1.5rem; color: #64748b; }
+        #chartContainer { display: none; height: 450px; }
     </style>
 </head>
 <body class="font-sans antialiased bg-gradient-to-br from-gray-50 to-blue-100 text-gray-800 p-4 md:p-8">
@@ -36,37 +19,37 @@
     <div class="w-full max-w-7xl mx-auto">
         <div class="bg-white shadow-2xl rounded-2xl p-6 md:p-10 border border-gray-200">
             <h2 class="text-4xl font-extrabold text-blue-800 text-center mb-4 tracking-tight">
-                Simulador Avançado de Renda Fixa
+                Simulador de Renda Fixa
             </h2>
             <p class="text-center text-sm text-green-600 font-medium mb-8">
-                <i class="fas fa-check-circle mr-2"></i>Dados oficiais do Banco Central do Brasil | Simulação de 18/07/2025
+                <i class="fas fa-check-circle mr-2"></i>Dados oficiais do Banco Central | Simulação de 18/07/2025
             </p>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div>
                     <label for="capital" class="block text-lg font-semibold text-gray-700 mb-2">Capital Inicial (R$):</label>
                     <input type="number" id="capital" value="1000" step="100" min="0" 
-                           class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-3 focus:ring-blue-400 focus:border-blue-400 transition duration-300 ease-in-out text-gray-900 text-lg" />
+                           class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-3 focus:ring-blue-400 focus:border-blue-400 transition" />
                 </div>
                 <div>
                     <label for="tempo" class="block text-lg font-semibold text-gray-700 mb-2">Tempo (anos):</label>
-                    <input type="number" id="tempo" value="5" min="1" 
-                           class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-3 focus:ring-blue-400 focus:border-blue-400 transition duration-300 ease-in-out text-gray-900 text-lg" />
+                    <input type="number" id="tempo" value="1" min="1" 
+                           class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-3 focus:ring-blue-400 focus:border-blue-400 transition" />
                 </div>
                 <div>
                     <label for="aporteMensal" class="block text-lg font-semibold text-gray-700 mb-2">Aporte Mensal (R$):</label>
-                    <input type="number" id="aporteMensal" value="100" step="50" min="0" 
-                           class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-3 focus:ring-blue-400 focus:border-blue-400 transition duration-300 ease-in-out text-gray-900 text-lg" />
+                    <input type="number" id="aporteMensal" value="0" step="50" min="0" 
+                           class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-3 focus:ring-blue-400 focus:border-blue-400 transition" />
                 </div>
             </div>
 
             <button onclick="carregarSimulacoes()"
-                    class="w-full py-4 bg-blue-700 text-white font-bold text-xl rounded-lg shadow-lg hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out transform hover:-translate-y-1 mb-10">
-                <i class="fas fa-search-dollar mr-3"></i> Simular Investimentos
+                    class="w-full py-4 bg-blue-700 text-white font-bold text-xl rounded-lg shadow-lg hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 transition transform hover:-translate-y-1 mb-10">
+                <i class="fas fa-calculator mr-3"></i> Simular Investimentos
             </button>
 
             <div id="investimentos" class="bg-blue-50 p-6 rounded-lg shadow-inner border border-blue-100">
-                Preencha os campos e clique no botão para simular.
+                Preencha os campos e clique para simular.
             </div>
 
             <div id="chartContainer" class="mt-8 p-4 bg-white rounded-lg shadow-md border border-gray-200">
@@ -77,45 +60,23 @@
     </div>
 
     <script>
-        // Tabela regressiva do Imposto de Renda (em dias)
         const IR_ALIQUOTAS = [
-            { dias: 0, aliquota: 0.225 },   // Até 180 dias
-            { dias: 181, aliquota: 0.20 },  // De 181 a 360 dias
-            { dias: 361, aliquota: 0.175 }, // De 361 a 720 dias
-            { dias: 721, aliquota: 0.15 }   // Acima de 720 dias
+            { dias: 0, aliquota: 0.225 },
+            { dias: 181, aliquota: 0.20 },
+            { dias: 361, aliquota: 0.175 },
+            { dias: 721, aliquota: 0.15 }
         ];
-
-        // Códigos das séries do Banco Central (SGS)
-        const seriesBC = [
-            { nome: 'SELIC', codigo: 11 },
-            { nome: 'IPCA', codigo: 433 },
-            { nome: 'TR', codigo: 226 }, // Taxa Referencial Diária
+        const BC_SERIES = { SELIC: 11, IPCA: 433 };
+        const SIMULADOS = [
+            { nome: 'Tesouro Selic', tipo: 'SELIC_DIRETO', isentoIR: false },
+            { nome: 'CDB 110% CDI', tipo: 'CDI_PERCENTUAL', percentual: 110, isentoIR: false },
+            { nome: 'LCI/LCA 97% CDI', tipo: 'CDI_PERCENTUAL', percentual: 97, isentoIR: true },
+            { nome: 'Tesouro IPCA+ 5,5%', tipo: 'IPCA_MAIS_SPREAD', spread: 5.50, isentoIR: false },
+            { nome: 'Tesouro Prefixado', tipo: 'FIXA', taxaAnual: 11.80, isentoIR: false },
         ];
-        
-        // Dados simulados para investimentos privados (valores ilustrativos)
-        const simulados = [
-            { nome: 'Tesouro Selic', tipo: 'SELIC_DIRETO', isentoIR: false, liquidez: 'D+1' },
-            { nome: 'CDB 110% CDI', tipo: 'CDI_PERCENTUAL', percentualCDI: 110, isentoIR: false, liquidez: 'Diária/Venc.' },
-            { nome: 'LCI/LCA 97% CDI', tipo: 'CDI_PERCENTUAL', percentualCDI: 97, isentoIR: true, liquidez: 'Vencimento' },
-            { nome: 'Tesouro IPCA+ 5,5%', tipo: 'IPCA_MAIS_SPREAD', spread: 5.50, isentoIR: false, liquidez: 'Vencimento' },
-            { nome: 'Tesouro Prefixado', tipo: 'FIXA', taxaAnual: 11.80, isentoIR: false, liquidez: 'Vencimento' },
-        ];
-
-        // Formatadores
         const currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
         const percentFormatter = new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
         let myChartInstance = null;
-        let chartDataSets = [];
-
-        function calcularIR(jurosBrutos, anos) {
-            if (jurosBrutos <= 0) return 0;
-            const dias = anos * 365;
-            for (let i = IR_ALIQUOTAS.length - 1; i >= 0; i--) {
-                if (dias >= IR_ALIQUOTAS[i].dias) return jurosBrutos * IR_ALIQUOTAS[i].aliquota;
-            }
-            return jurosBrutos * IR_ALIQUOTAS[0].aliquota;
-        }
 
         async function buscarTaxaBC(codigo) {
             const url = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados/ultimos/1?formato=json`;
@@ -123,19 +84,24 @@
                 const res = await fetch(url);
                 if (!res.ok) return null;
                 const data = await res.json();
-                return data && data.length > 0 ? parseFloat(data[0].valor) : null;
-            } catch (err) {
-                console.error(`Falha ao buscar série ${codigo}:`, err);
-                return null;
+                return data?.[0]?.valor ? parseFloat(data[0].valor) : null;
+            } catch (err) { return null; }
+        }
+
+        function calcularIR(juros, anos) {
+            if (juros <= 0) return 0;
+            const dias = anos * 365;
+            for (let i = IR_ALIQUOTAS.length - 1; i >= 0; i--) {
+                if (dias >= IR_ALIQUOTAS[i].dias) return juros * IR_ALIQUOTAS[i].aliquota;
             }
+            return 0;
         }
 
         function calculaMontante(capital, taxaAnual, anos, aporteMensal) {
-            if (taxaAnual === null) return null;
+            if (taxaAnual === null || isNaN(taxaAnual)) return null;
             const meses = anos * 12;
             const taxaMensal = Math.pow(1 + taxaAnual, 1/12) - 1;
             const totalAportado = capital + (aporteMensal * meses);
-
             let montante = capital * Math.pow(1 + taxaMensal, meses);
             if (aporteMensal > 0 && taxaMensal > 0) {
                 montante += aporteMensal * (Math.pow(1 + taxaMensal, meses) - 1) / taxaMensal;
@@ -162,82 +128,60 @@
             }
             saveInputs(capital, anos, aporteMensal);
 
-            const dadosBC = {};
-            for (const serie of seriesBC) {
-                dadosBC[serie.nome] = await buscarTaxaBC(serie.codigo);
-            }
+            const [selicPercent, ipcaPercent] = await Promise.all([
+                buscarTaxaBC(BC_SERIES.SELIC),
+                buscarTaxaBC(BC_SERIES.IPCA)
+            ]);
 
-            const selicAnual = dadosBC['SELIC'] / 100;
-            if (selicAnual === null) {
-                divInvestimentos.innerHTML = `<p class="text-red-600 font-bold">Não foi possível obter a taxa Selic. Tente novamente.</p>`;
+            if (selicPercent === null) {
+                divInvestimentos.innerHTML = `<p class="text-red-600 font-bold">Falha ao buscar a taxa Selic. Tente novamente.</p>`;
                 return;
             }
 
-            const cdiAnual = selicAnual - 0.001; // CDI ~ Selic - 0.10%
-            const ipcaMensal = dadosBC['IPCA'] / 100;
-            const trDiaria = dadosBC['TR'] / 100;
-
+            const selicAnualDecimal = selicPercent / 100;
+            const cdiAnualDecimal = selicAnualDecimal - 0.001;
+            const ipcaMensalDecimal = ipcaPercent / 100;
+            
             const investimentos = [];
 
-            // --- Cálculo Preciso da Poupança ---
-            let taxaPoupanca = null, obsPoupanca = '';
-            if (trDiaria !== null) {
-                if (selicAnual > 0.085) {
-                    const trMensal = Math.pow(1 + trDiaria, 30) - 1;
-                    const rendimentoMensal = 0.005 + trMensal;
-                    taxaPoupanca = Math.pow(1 + rendimentoMensal, 12) - 1;
-                    obsPoupanca = 'Regra: 0,5% a.m. + TR';
-                } else {
-                    const rendimentoDaSelic = 0.70 * selicAnual;
-                    const rendimentoDaTR = Math.pow(1 + trDiaria, 252) - 1;
-                    taxaPoupanca = rendimentoDaSelic + rendimentoDaTR;
-                    obsPoupanca = 'Regra: 70% Selic + TR';
-                }
-                investimentos.push({ nome: 'Poupança', taxaAnual: taxaPoupanca, obs: obsPoupanca, isentoIR: true, liquidez: 'Diária' });
-            }
-
-            simulados.forEach(s => {
-                let taxa = null, obs = '';
+            SIMULADOS.forEach(s => {
+                let taxaAnual = null;
+                let obs = '';
                 switch (s.tipo) {
                     case 'FIXA':
-                        taxa = s.taxaAnual / 100;
+                        taxaAnual = s.taxaAnual / 100;
                         obs = `Pré-fixado`;
                         break;
                     case 'SELIC_DIRETO':
-                        taxa = selicAnual;
+                        taxaAnual = selicAnualDecimal;
                         obs = `100% da Selic`;
                         break;
                     case 'CDI_PERCENTUAL':
-                        taxa = cdiAnual * (s.percentualCDI / 100);
-                        obs = `${s.percentualCDI}% do CDI`;
+                        taxaAnual = cdiAnualDecimal * (s.percentual / 100);
+                        obs = `${s.percentual}% do CDI`;
                         break;
                     case 'IPCA_MAIS_SPREAD':
-                        if (ipcaMensal !== null) {
-                            const ipcaAnual = Math.pow(1 + ipcaMensal, 12) - 1;
-                            taxa = (1 + ipcaAnual) * (1 + (s.spread / 100)) - 1;
+                        if (ipcaPercent !== null) {
+                            const ipcaAnual = Math.pow(1 + ipcaMensalDecimal, 12) - 1;
+                            taxaAnual = (1 + ipcaAnual) * (1 + (s.spread / 100)) - 1;
                             obs = `IPCA + ${s.spread.toFixed(2)}%`;
                         }
                         break;
                 }
-                if (taxa !== null) {
-                    investimentos.push({ nome: s.nome, taxaAnual: taxa, obs: obs, isentoIR: s.isentoIR, liquidez: s.liquidez });
+                if (taxaAnual !== null) {
+                    investimentos.push({ nome: s.nome, taxaAnual, obs, isentoIR: s.isentoIR });
                 }
             });
 
-            // Processamento dos resultados
             const resultados = investimentos.map(inv => {
                 const montante = calculaMontante(capital, inv.taxaAnual, anos, aporteMensal);
-                if (!montante) return { ...inv, liquido: 0 };
-                const ir = inv.isentoIR ? 0 : calcularIR(montante.juros, anos);
-                return { ...inv, ...montante, ir, liquido: montante.bruto - ir };
+                if (!montante) return { ...inv, liquido: 0, juros: 0, ir: 0 };
+                const ir = calcularIR(montante.juros, anos);
+                const jurosLiquidos = montante.juros - (inv.isentoIR ? 0 : ir);
+                return { ...inv, liquido: montante.bruto - (inv.isentoIR ? 0 : ir), jurosLiquidos, ir: inv.isentoIR ? 0 : ir };
             }).sort((a, b) => b.liquido - a.liquido);
 
-            chartDataSets = resultados; // Armazena para o gráfico
-
-            let tabelaHTML = `...`; // O restante da função para gerar a tabela e chamar o gráfico
-            
-            // Gerar Tabela
-            tabelaHTML = `
+            let tabelaHTML = `
                 <div class="text-center md:text-left mb-4 p-4 bg-gray-100 rounded-lg">
                     <strong>Capital:</strong> ${currencyFormatter.format(capital)} | 
                     <strong>Aportes:</strong> ${currencyFormatter.format(aporteMensal)}/mês |
@@ -245,7 +189,7 @@
                     <strong>Total Investido:</strong> ${currencyFormatter.format(capital + (aporteMensal * anos * 12))}
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">
+                    <table class="w-full border-collapse">
                         <thead>
                             <tr class="bg-blue-800 text-white text-left text-sm uppercase tracking-wider sticky-header">
                                 <th class="p-3">Investimento</th>
@@ -256,63 +200,79 @@
                                 <th class="p-3 text-right">IR Pago</th>
                             </tr>
                         </thead>
-                        <tbody>
-            `;
-
+                        <tbody>`;
+            
             resultados.forEach((r, i) => {
-                const jurosLiquidos = r.juros - r.ir;
                 const rowClass = i % 2 === 0 ? 'bg-white' : 'table-row-even';
-                tabelaHTML += `<tr class="${rowClass} hover:bg-blue-100 transition duration-150 ease-in-out text-sm">
-                    <td class="p-3 border-b border-gray-200 font-semibold text-gray-800">${r.nome}</td>
-                    <td class="p-3 border-b border-gray-200 text-right font-mono text-blue-800">${percentFormatter.format(r.taxaAnual)}</td>
-                    <td class="p-3 border-b border-gray-200 text-gray-600">${r.obs}</td>
-                    <td class="p-3 border-b border-gray-200 text-right font-mono text-green-800 font-bold text-base">${currencyFormatter.format(r.liquido)}</td>
-                    <td class="p-3 border-b border-gray-200 text-right font-mono text-green-700">${currencyFormatter.format(jurosLiquidos)}</td>
-                    <td class="p-3 border-b border-gray-200 text-right font-mono text-red-600">${currencyFormatter.format(r.ir)}</td>
-                </tr>`;
+                tabelaHTML += `
+                    <tr class="${rowClass} hover:bg-blue-100 transition duration-150 ease-in-out text-sm">
+                        <td class="p-3 border-b border-gray-200 font-semibold text-gray-800">${r.nome}</td>
+                        <td class="p-3 border-b border-gray-200 text-right font-mono text-blue-800">${percentFormatter.format(r.taxaAnual)}</td>
+                        <td class="p-3 border-b border-gray-200 text-gray-600">${r.obs}</td>
+                        <td class="p-3 border-b border-gray-200 text-right font-mono text-green-800 font-bold text-base">${currencyFormatter.format(r.liquido)}</td>
+                        <td class="p-3 border-b border-gray-200 text-right font-mono text-green-700">${currencyFormatter.format(r.jurosLiquidos)}</td>
+                        <td class="p-3 border-b border-gray-200 text-right font-mono text-red-600">${currencyFormatter.format(r.ir)}</td>
+                    </tr>`;
             });
             tabelaHTML += `</tbody></table></div>`;
+            
+            // ADICIONA O BOTÃO DE WHATSAPP AQUI
+            // Usamos slice(0, 5) para compartilhar apenas os 5 melhores resultados
+            const top5Resultados = JSON.stringify(resultados.slice(0, 5));
+            tabelaHTML += `
+                <button onclick='compartilharNoWhatsApp(${capital}, ${anos}, ${aporteMensal}, ${top5Resultados})'
+                        class="mt-8 w-full py-3 bg-green-500 text-white font-bold text-lg rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition duration-200 ease-in-out flex items-center justify-center">
+                    <i class="fab fa-whatsapp mr-3 text-xl"></i> Compartilhar Resultados
+                </button>
+            `;
+
             divInvestimentos.innerHTML = tabelaHTML;
             divInvestimentos.classList.add('loaded');
             
-            renderChart(resultados, anos);
+            renderChart(resultados, anos, capital, aporteMensal);
             chartContainer.style.display = 'block';
         }
 
-        // --- FUNÇÃO DO GRÁFICO TOTALMENTE REFEITA ---
-        function renderChart(data, anos) {
+        // NOVA FUNÇÃO PARA COMPARTILHAR NO WHATSAPP
+        function compartilharNoWhatsApp(capital, anos, aporteMensal, resultados) {
+            let mensagem = `📊 *Simulação de Renda Fixa* 📊\n\n`;
+            mensagem += `*Parâmetros:*\n`;
+            mensagem += `*Capital:* ${currencyFormatter.format(capital)}\n`;
+            mensagem += `*Aportes:* ${currencyFormatter.format(aporteMensal)}/mês\n`;
+            mensagem += `*Tempo:* ${anos} anos\n\n`;
+            mensagem += `*Top 5 Resultados (Valor Líquido):*\n`;
+
+            resultados.forEach((r, index) => {
+                mensagem += `\n*${index + 1}. ${r.nome}:*\n`;
+                mensagem += `   - Valor Final: *${currencyFormatter.format(r.liquido)}*\n`;
+                mensagem += `   - Taxa Anual: ${percentFormatter.format(r.taxaAnual)} (${r.obs})\n`;
+            });
+
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(mensagem)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function renderChart(data, anos, capital, aporteMensal) {
             const ctx = document.getElementById('myChart').getContext('2d');
             if (myChartInstance) myChartInstance.destroy();
             
-            // Paleta de cores profissional
-            const chartColors = ['#3b82f6', '#16a34a', '#ef4444', '#8b5cf6', '#f97316', '#06b6d4', '#d946ef', '#f59e0b'];
-            
-            // Define os 3 primeiros como visíveis por padrão, ou os mais relevantes
-            const defaultVisible = ['Poupança', 'Tesouro Selic', 'CDB 110% CDI'];
+            const chartColors = ['#3b82f6', '#16a34a', '#ef4444', '#8b5cf6', '#f97316', '#06b6d4', '#d946ef'];
+            const defaultVisible = ['Tesouro Selic', 'CDB 110% CDI', 'Tesouro IPCA+ 5,5%'];
 
             const datasets = data.map((inv, index) => {
                 const growthPoints = [];
                 for (let ano = 0; ano <= anos; ano++) {
-                    const montante = calculaMontante(parseFloat(document.getElementById('capital').value) || 0, inv.taxaAnual, ano, parseFloat(document.getElementById('aporteMensal').value) || 0);
-                    if (!montante) {
-                        growthPoints.push(0);
-                        continue;
-                    };
-                    const ir = inv.isentoIR ? 0 : calcularIR(montante.juros, ano);
-                    growthPoints.push(montante.bruto - ir);
+                    const montante = calculaMontante(capital, inv.taxaAnual, ano, aporteMensal);
+                    if (!montante) { growthPoints.push(ano === 0 ? capital : 0); continue; };
+                    const ir = calcularIR(montante.juros, ano);
+                    growthPoints.push(montante.bruto - (inv.isentoIR ? 0 : ir));
                 }
-                
                 return {
-                    label: inv.nome,
-                    data: growthPoints,
+                    label: inv.nome, data: growthPoints,
                     borderColor: chartColors[index % chartColors.length],
-                    backgroundColor: chartColors[index % chartColors.length] + '33', // Cor com transparência
-                    fill: false,
-                    tension: 0.4, // Linhas mais suaves
-                    pointRadius: 4,
-                    pointHoverRadius: 7,
-                    borderWidth: 2,
-                    hidden: !defaultVisible.includes(inv.nome) && index > 2
+                    backgroundColor: chartColors[index % chartColors.length] + '33',
+                    fill: false, tension: 0.4, pointRadius: 4, pointHoverRadius: 7, borderWidth: 2.5,
+                    hidden: !defaultVisible.includes(inv.nome)
                 };
             });
 
@@ -323,50 +283,16 @@
                     datasets: datasets
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 20,
-                                font: {
-                                    size: 12
-                                }
-                            }
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) label += ': ';
-                                    if (context.parsed.y !== null) {
-                                        label += currencyFormatter.format(context.parsed.y);
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, font: { size: 12 } } },
+                        tooltip: { mode: 'index', intersect: false, callbacks: { label: (c) => `${c.dataset.label}: ${currencyFormatter.format(c.parsed.y)}` } }
                     },
                     scales: {
                         x: { grid: { display: false } },
-                        y: { 
-                            grid: { color: '#e5e7eb' },
-                            ticks: {
-                                callback: function(value) {
-                                    return currencyFormatter.format(value);
-                                }
-                            }
-                        }
+                        y: { grid: { color: '#e5e7eb' }, ticks: { callback: (v) => currencyFormatter.format(v) } }
                     },
-                    interaction: {
-                        mode: 'nearest',
-                        axis: 'x',
-                        intersect: false
-                    }
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false }
                 }
             });
         }
